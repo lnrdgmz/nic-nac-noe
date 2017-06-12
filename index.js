@@ -1,3 +1,7 @@
+const readline = require('readline');
+
+const rl = readline.createInterface({input: process.stdin, output: process.stdout});
+
 const TicTacToeBoard = function() {
   this.board = [
     [' ', ' ', ' '],
@@ -12,22 +16,26 @@ TicTacToeBoard.prototype = {
   * and adds the letter to the board
   */
   squareExists: function(square) {
+    const rowIdx = square[0];
+    const colIdx = square[1];
     return rowIdx >= 0 && rowIdx < this.board.length && colIdx >= 0 && colIdx < this.board[rowIdx].length;
   },
   place: function(letter, square) {
     const rowIdx = square[0];
     const colIdx = square[1];
-    if (!squareExists(square) || this.board[rowIdx][colIdx] !== ' ') {
-      console.error('Invalid move')
+    if (!this.squareExists(square) || this.board[rowIdx][colIdx] !== ' ') {
+      console.error('Invalid move');
+      return false
     } else {
       this.board[rowIdx][colIdx] = letter;
+      return true;
     }
   },
   /**
   * isWinningMove returns true if the square on the board is part of a 3-long line
   */
   isWinningMove: function(square) {
-    return isHorizontalLine(square) || isVerticalLine(square) || isDiagonalLine(square);
+    return this.isHorizontalLine(square) || this.isVerticalLine(square) || this.isDiagonalLine(square);
   },
   isHorizontalLine: function(square) {
     const letter = this.board[square[0]][square[1]];
@@ -40,9 +48,29 @@ TicTacToeBoard.prototype = {
     }, true)
   },
   isDiagonalLine: function(square) {
-    /**
-     * Fill me out!
-     */
+    const x = square[0];
+    const y = square[1];
+    // check if square is one of the 5 spaces which can make up a diagonal
+    if (
+      (x === 0 && y === this.board.length - 1) ||
+      (x === y) ||
+      (x === this.board.length - 1 && y === 0)) {
+        return this.backslashLine() || this.slashLine();
+      }
+  },
+  backslashLine: function() {
+    const letter = this.board[0][0];
+    for (let i = 1; i < this.board.length; i++) {
+      if (this.board[i][i] !== letter) return false;
+    }
+    return true;
+  },
+  slashLine: function() {
+    const letter = this.board[0][this.board.length - 1];
+    for (let i = 1; i < this.board.length; i++) {
+      if (this.board[i][this.board.length - i - 1]) return false;
+    }
+    return true;
   },
   boardToString: function() {
     const rowToString = (row) => {
@@ -54,14 +82,24 @@ TicTacToeBoard.prototype = {
 
 const board = new TicTacToeBoard();
 
-console.log(board.boardToString())
+const handleMove = (player, x, y, board) => {
+  move = board.place(player, [x, y]);
+  if (move) {
+    const nextPlayer = player === 'X' ? 'O' : 'X';
+    promptForMove(nextPlayer, board)
+  } else {
+    promptForMove(player, board);
+  }
+};
 
-// set current player to X
+const promptForMove = (player, board) => {
+  console.log(board.boardToString());
 
-// while (true) {
-//    print board on the screen
-//    prompt 'Player [X|Y], choose your move'
-//    if move is invalid, print error and resume from top of loop
-//    else if the move is a winning move, end game
-//    else toggle player
-// }
+  rl.question(`${player}, make your move (row,col):\n`, (str) => {
+    console.log('\n\n\n');
+    const arr = str.split(',')
+    handleMove(player, parseInt(arr[0], 10), parseInt(arr[1], 10), board);
+  })
+};
+
+promptForMove('X', board);
