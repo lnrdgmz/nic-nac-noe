@@ -1,0 +1,19 @@
+{
+  "name": "nic-nac-noe",
+  "version": "1.0.0",
+  "description": "A CLI tic-tac-toe game written in Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lnrdgmz/nic-nac-noe.git"
+  },
+  "author": "Leo Gomez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lnrdgmz/nic-nac-noe/issues"
+  },
+  "homepage": "https://github.com/lnrdgmz/nic-nac-noe#readme"
+}
